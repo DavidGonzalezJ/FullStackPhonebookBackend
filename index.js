@@ -54,9 +54,11 @@ app.delete('/api/persons/:id', (request,response)=>{
 app.post('/api/persons',(request, response)=>{
     const body = request.body
     console.log(body)
-    if(!body.name || !body.number){
+    if(!body.name || !body.number)
         return response.status(400).json({error:'content missing'})
-    }
+    
+    if(persons.find(person => person.name === body.name))
+        return response.status(400).json({error:'person already exists'})
     
     const max = 10000
     const min = 1
