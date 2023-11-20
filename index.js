@@ -26,7 +26,14 @@ let persons = [
 
 app.get('/api/persons', (request, response) => {
     response.json(persons)
-  })
+})
+
+app.get('/info', (request, response) => {
+    const date = new Date()
+    let toPrint = `Phonebook has info for ${persons.length} people<br/>
+    ${date}`
+    response.send(toPrint)
+})
 
 const PORT = 3001
 app.listen(PORT, ()=> {
