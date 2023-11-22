@@ -4,7 +4,14 @@ const app = express()
 
 
 app.use(express.json())
-app.use(morgan('tiny'))
+
+morgan.token('post-body',(request,response)=>{
+    if(request.method === 'POST')
+        return JSON.stringify(request.body)
+})
+
+app.use(morgan(':method :url :status :response-time ms :post-body'))
+
 
 let persons = [
     { 
@@ -56,7 +63,7 @@ app.delete('/api/persons/:id', (request,response)=>{
 
 app.post('/api/persons',(request, response)=>{
     const body = request.body
-    console.log(body)
+    //console.log(body)
     if(!body.name || !body.number)
         return response.status(400).json({error:'content missing'})
     
@@ -71,7 +78,7 @@ app.post('/api/persons',(request, response)=>{
         id: Math.floor(Math.random() * (max - min) + min)
     }
 
-    console.log(person)
+    //console.log(person)
     persons = persons.concat(person)
     response.json(person)
 })
