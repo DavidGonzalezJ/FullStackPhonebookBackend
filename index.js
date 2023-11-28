@@ -18,30 +18,6 @@ morgan.token('post-body',(request,response)=>{
 })
 app.use(morgan(':method :url :status :response-time ms :post-body'))
 
-
-/*let persons = [
-    { 
-      "id": 1,
-      "name": "Arto Hellas", 
-      "number": "040-123456"
-    },
-    { 
-      "id": 2,
-      "name": "Ada Lovelace", 
-      "number": "39-44-5323523"
-    },
-    { 
-      "id": 3,
-      "name": "Dan Abramov", 
-      "number": "12-43-234345"
-    },
-    { 
-      "id": 4,
-      "name": "Mary Poppendieck", 
-      "number": "39-23-6423122"
-    }
-]*/
-
 app.get('/api/persons', (request, response) => {
     Person.find({}).then(persons =>{
         response.json(persons)
@@ -64,6 +40,7 @@ app.get('/info', (request, response) => {
     })
 })
 
+//Still doesn't work with MongoDB
 app.delete('/api/persons/:id', (request,response)=>{
     const id = Number(request.params.id)
     persons = persons.filter(person => person.id !== id)
@@ -73,24 +50,29 @@ app.delete('/api/persons/:id', (request,response)=>{
 
 app.post('/api/persons',(request, response)=>{
     const body = request.body
-    //console.log(body)
+    
+    //Checks the request is good
     if(!body.name || !body.number)
         return response.status(400).json({error:'content missing'})
     
-    if(persons.find(person => person.name === body.name))
-        return response.status(400).json({error:'person already exists'})
-    
-    const max = 10000
-    const min = 1
-    const person = {
-        name: body.name,
-        number: body.number,
-        id: Math.floor(Math.random() * (max - min) + min)
-    }
+    //Checks if the person requested is already in the database
+    Person.findOne({name:body.name}).then(found => {
+        if(found)
+            return response.status(400).json({error:'person already exists'})
+        
+        else{
+           //Adds the person
+            const person = new Person({
+                name: body.name,
+                number: body.number,
+            })
 
-    //console.log(person)
-    persons = persons.concat(person)
-    response.json(person)
+            person.save().then(saved => {
+                console.log(saved.name,' saved')
+                response.json(saved)
+            }) 
+        }
+    })
 })
 
 const PORT = process.env.PORT
