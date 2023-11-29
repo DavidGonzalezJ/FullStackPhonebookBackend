@@ -40,12 +40,12 @@ app.get('/info', (request, response) => {
     })
 })
 
-//Still doesn't work with MongoDB
 app.delete('/api/persons/:id', (request,response)=>{
-    const id = Number(request.params.id)
-    persons = persons.filter(person => person.id !== id)
-
-    response.status(204).end()
+    Person.findByIdAndDelete(request.params.id)
+        .then(result => {
+            console.log('Deleted: ',result.name)
+            response.status(204).end()
+        })
 })
 
 app.post('/api/persons',(request, response)=>{
