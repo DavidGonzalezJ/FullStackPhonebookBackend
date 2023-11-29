@@ -19,7 +19,7 @@ morgan.token('post-body',(request,response)=>{
 app.use(morgan(':method :url :status :response-time ms :post-body'))
 
 
-//------------------Request handlers-----------------------
+//------------------Request handlers------------------------
 app.get('/api/persons', (request, response, next) => {
     Person.find({}).then(persons =>{
         response.json(persons)
@@ -48,7 +48,6 @@ app.get('/info', (request, response, next) => {
 app.delete('/api/persons/:id', (request,response, next)=>{
     Person.findByIdAndDelete(request.params.id)
         .then(result => {
-            console.log('Deleted: ',result.name)
             response.status(204).end()
         })
         .catch(error => next(error))
@@ -84,7 +83,7 @@ app.post('/api/persons',(request, response, next)=>{
 
 app.put('/api/persons/:id', (request,response,next) => {
     const body = request.body
-    
+
     const person = {
         name: body.name,
         number: body.number,
