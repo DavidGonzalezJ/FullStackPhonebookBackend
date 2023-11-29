@@ -19,7 +19,7 @@ morgan.token('post-body',(request,response)=>{
 app.use(morgan(':method :url :status :response-time ms :post-body'))
 
 
-//Request handlers
+//------------------Request handlers-----------------------
 app.get('/api/persons', (request, response, next) => {
     Person.find({}).then(persons =>{
         response.json(persons)
@@ -82,10 +82,28 @@ app.post('/api/persons',(request, response, next)=>{
     .catch(error => next(error))
 })
 
+app.put('/api/persons/:id', (request,response,next) => {
+    const body = request.body
+    
+    const person = {
+        name: body.name,
+        number: body.number,
+    }
+
+    Person.findByIdAndUpdate(request.params.id, person, {new:true})
+        .then(updatedPerson => {
+            response.json(updatedPerson)
+        })
+        .catch(error => next(error))
+})
+
+//-----------------End of Request handlers---------------------
+
 const PORT = process.env.PORT
 app.listen(PORT, ()=> {
     console.log(`Server running on port ${PORT}`)
 })
+
 
 //Unknown endpoints middleware
 const unknownEndpoint = (request, response) => {
