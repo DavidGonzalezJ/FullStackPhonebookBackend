@@ -1,13 +1,15 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable arrow-spacing */
 const mongoose = require('mongoose')
 
-if(process.argv.length <3){
+if(process.argv.length <3) {
     console.log('password needed')
     process.exit(1)
 }
 
 const showContent = process.argv.length === 3
 
-if (!showContent && process.argv.length < 5){
+if (!showContent && process.argv.length < 5) {
     console.log('number needed')
     process.exit(1)
 }
@@ -22,7 +24,7 @@ mongoose.connect(url)
 const personSchema = new mongoose.Schema(
     {
         name: String,
-        number: String, 
+        number: String,
     }
 )
 
@@ -42,7 +44,7 @@ if(showContent){
 else {
     const name = process.argv[3]
     const number = process.argv[4]
-    
+
     const person = new Person({
         name: name,
         number: number,
