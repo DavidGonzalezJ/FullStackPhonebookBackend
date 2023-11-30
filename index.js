@@ -56,10 +56,6 @@ app.delete('/api/persons/:id', (request,response, next)=>{
 app.post('/api/persons',(request, response, next)=>{
     const body = request.body
     
-    //Checks the request is good
-    if(!body.name || !body.number)
-        return response.status(400).json({error:'content missing'})
-    
     //Checks if the person requested is already in the database
     Person.findOne({name:body.name}).then(found => {
         if(found)
@@ -75,21 +71,19 @@ app.post('/api/persons',(request, response, next)=>{
             person.save().then(saved => {
                 console.log(saved.name,' saved')
                 response.json(saved)
-            }) 
+            })
+            .catch(error => next(error))
         }
     })
     .catch(error => next(error))
 })
 
 app.put('/api/persons/:id', (request,response,next) => {
-    const body = request.body
+    const {name, number} = request.body
 
-    const person = {
-        name: body.name,
-        number: body.number,
-    }
-
-    Person.findByIdAndUpdate(request.params.id, person, {new:true})
+    Person.findByIdAndUpdate(request.params.id,
+        {name,number},
+        {new:true, runValidators: true, context: 'query'})
         .then(updatedPerson => {
             response.json(updatedPerson)
         })
